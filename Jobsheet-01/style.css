@@ -13,7 +13,7 @@ body {
 }
 
 a {
-    color: #1d5b8a;
+    color: #1e5e3a;
     text-decoration: none;
 }
 
@@ -23,7 +23,7 @@ a:hover {
 
 /* ===== Header & Navbar (Flexbox) ===== */
 header {
-    background-color: #1d5b8a;
+    background-color: #1e5e3a;
     color: #fff;
     padding: 1rem 1.5rem;
     display: flex;
@@ -64,7 +64,7 @@ section {
 
 section h2 {
     margin-bottom: 1rem;
-    color: #1d5b8a;
+    color: #1e5e3a;
 }
 
 /* ===== Kartu Statistik (CSS Grid) ===== */
@@ -87,7 +87,7 @@ main section:nth-of-type(2) article {
 /* trik grid agar 3 artikel berjejer rapi */
 main section:nth-of-type(2) {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* GANTI repeat(3, 1fr) MENJADI 4 */
     gap: 1rem;
 }
 
@@ -104,7 +104,7 @@ main section:nth-of-type(2) article h3 {
 main section:nth-of-type(2) article p {
     font-size: 1.8rem;
     font-weight: 700;
-    color: #1d5b8a;
+    color: #1e5e3a;
 }
 
 /* ===== Tabel ===== */
@@ -120,7 +120,7 @@ th, td {
 }
 
 thead {
-    background-color: #1d5b8a;
+    background-color: #1e5e3a;
     color: #fff;
 }
 
@@ -141,15 +141,22 @@ td button {
     font-size: 0.85rem;
 }
 
-td button:first-of-type {
+/* Ganti kode tombol lama dengan ini */
+td button.btn-edit {
     background-color: #f0ad4e;
     color: #fff;
 }
 
-td button:last-of-type {
+td button.btn-detail {
+    background-color: #0275d8;
+    color: #fff;
+}
+
+td button.btn-hapus {
     background-color: #d9534f;
     color: #fff;
 }
+
 
 /* ===== Form ===== */
 form p {
@@ -174,7 +181,7 @@ form select {
 }
 
 form button[type="submit"] {
-    background-color: #1d5b8a;
+    background-color: #1e5e3a;
     color: #fff;
     border: none;
     padding: 0.6rem 1.5rem;
