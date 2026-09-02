@@ -1,0 +1,64 @@
+<!DOCTYPE html> 
+<html lang="id"> 
+<head>
+    <meta charset="UTF-8"> 
+    <meta charset="UTF-8"> 
+</head>
+<body>
+    <header>
+        <h1>SIMPUS-Mini</h1> 
+        <nav>
+            <ul>
+                <li><a href="../index.html">Beranda</a></li>
+                <li><a href="/buku/list.html">Daftar Buku</a></li>
+                <li><a href="/buku/tambah.html">Tambah Buku</a></li>
+                <li><a href="/anggota/list.html">Daftar anggota</a></li>
+                <li><a href="/anggota/tambah.html">Tambah anggota</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+       <form>
+    <p>
+        <label for="judul">Judul</label><br>
+        <input type="text" id="judul" name="judul" required>
+    </p>
+
+    <p>
+        <label for="pengarang">Pengarang</label><br>
+        <input type="text" id="pengarang" name="pengarang required">
+    </p>
+
+    <p>
+        <label for="tahun">Tahun Terbit</label><br>
+        <input type="number" id="tahun" name="tahun" min="1900" max="2026" required>
+    </p>
+
+    <p>
+        <label for="isbn">ISBN</label><br>
+        <input type="text" id="isbn" name="isbn">
+    </p>
+
+    <p>
+        <label for="stok">Stok</label>
+        <input type="number" id="stok" name="stok" min="0" required>
+    </p>
+
+        <p>
+            <label for="kategori">Kategori</label><br>
+            <select id="kategori" name="kategori">
+                <option value="fiksi">Fiksi</option>
+                <option value="non-fiksi">Non-Fiksi</option>
+                <option value="referensi">Referensi</option>
+            </select>
+        </p>
+        <p>
+            <button type="submit">Simpan</button>
+        </p>
+</form>
+    </main>
+
+    <footer>
+        <p>© 2026 SIMPUS-Mini — Jobsheet 1 - Valent ridho - absen 23</p>
+    </footer>
+</body>
