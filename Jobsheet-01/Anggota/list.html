@@ -9,8 +9,7 @@
 <body>
     <header>
         <h1>SIMPUS-Mini</h1> 
-        <input type="checkbox" id="nav-toggle" class="nav-toggle">
-<label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+        <button type="button" id="nav-toggle-btn" class="nav-toggle-label" aria-label="Menu">&#9776;</button>
         <nav>
             <ul>
                 <li><a href="../index.html">Beranda</a></li>
@@ -21,9 +20,13 @@
             </ul>
         </nav>
     </header>
-    <main>
+    <main class="container">
         <section>
             <h2>Daftar Anggota</h2>
+             <div class="search-box">
+                <label for="search-input">Cari Daftar anggota</label>
+                <input type="text" id="search-input" placeholder="Ketik Nama anggota...">
+             </div>
             <div class="table-responsive">
             <table>
                 <thead>
@@ -44,8 +47,9 @@
                         <td>083830867161</td>
                         <td>26 agustus 2026</td>
                         <td>
-                            <button type="button">Edit</button>
-                            <button type="button">Hapus</button>
+                           <!-- KODE PERBAIKAN (BENAR) -->
+                            <button type="button" class="btn-edit">Edit</button>
+                            <button type="button" class="btn-hapus">Hapus</button>
                         </td>
                     </tr>
                     <tr>
@@ -55,8 +59,9 @@
                         <td>0812xxxxxxx</td>
                         <td>1 january 2000</td>
                         <td>
-                            <button type="button">Edit</button>
-                            <button type="button">Hapus</button>
+                           <!-- KODE PERBAIKAN (BENAR) -->
+                            <button type="button" class="btn-edit">Edit</button>
+                            <button type="button" class="btn-hapus">Hapus</button>
                         </td>
                     </tr>
                 </tbody>
@@ -68,5 +73,6 @@
     <footer>
         <p>© 2026 SIMPUS-Mini — Jobsheet 1 - Valent ridho - absen 23</p>
     </footer>
+    <script src="assets/js/app.js"></script> <!-- BENAR -->
 </body>
 </html>

@@ -8,8 +8,7 @@
 </head>
 <body>
     <header>
-        <input type="checkbox" id="nav-toggle" class="nav-toggle">
-<label for="nav-toggle" class="nav-toggle-label">&#9776;</label>
+        <button type="button" id="nav-toggle-btn" class="nav-toggle-label" aria-label="Menu">&#9776;</button>
         <h1>SIMPUS-Mini</h1> 
         <nav>
             <ul>
@@ -21,9 +20,13 @@
             </ul>
         </nav>
     </header>
-    <main>
+    <main class="container">
         <section>
             <h2>Daftar Buku</h2>
+             <div class="search-box">
+                <label for="search-input">Cari Judul Buku</label>
+                <input type="text" id="search-input" placeholder="Ketik judul buku...">
+             </div>
             <div class="table-responsive">
             <table>
                 <thead>
@@ -78,5 +81,6 @@
     <footer>
         <p>© 2026 SIMPUS-Mini — Jobsheet 1 - Valent ridho - absen 23</p>
     </footer>
+   <script src="assets/js/app.js"></script>
 </body>
 </html>
