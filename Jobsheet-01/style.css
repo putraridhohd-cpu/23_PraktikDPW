@@ -48,10 +48,14 @@ header nav a {
     font-weight: 500;
 }
 
-/* Sembunyikan Checkbox & Label Hamburger di Layar Desktop */
-.nav-toggle,
+/* Tombol Hamburger di Desktop (Disembunyikan) */
 .nav-toggle-label {
     display: none;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: #fff;
+    cursor: pointer;
 }
 
 /* ===== Main Layout ===== */
@@ -103,6 +107,27 @@ main section:nth-of-type(2) article p {
     font-size: 1.8rem;
     font-weight: 700;
     color: #1e5e3a;
+}
+
+/* ===== Kotak Pencarian / Search Box ===== */
+.search-box {
+    margin-bottom: 1rem;
+}
+
+.search-box label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.search-box input {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #cdd4da;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
 /* ===== Tabel Responsif Wrapper ===== */
@@ -194,6 +219,14 @@ form button[type="submit"]:hover {
     background-color: #164869;
 }
 
+/* Teks Peringatan Error Validasi JS */
+.error {
+    display: block;
+    color: #d9534f;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
 /* ===== Footer ===== */
 footer {
     text-align: center;
@@ -218,9 +251,6 @@ footer {
     /* Munculkan Tombol Hamburger */
     .nav-toggle-label {
         display: block;
-        font-size: 1.6rem;
-        color: #fff;
-        cursor: pointer;
     }
 
     /* Sembunyikan Menu Navigasi Secara Bawaan */
@@ -231,8 +261,8 @@ footer {
         margin-top: 1rem;
     }
 
-    /* Tampilkan Menu Jika Checkbox Di-centang */
-    .nav-toggle:checked ~ nav {
+    /* Tampilkan Menu Saat JavaScript Menambahkan Class nav-open */
+    header nav.nav-open {
         display: block;
     }
 
@@ -249,7 +279,8 @@ footer {
 
     /* Form Memenuhi Lebar Layar */
     form input,
-    form select {
+    form select,
+    .search-box input {
         max-width: 100%;
     }
 }
