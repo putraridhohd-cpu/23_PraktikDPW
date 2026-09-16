@@ -9,7 +9,7 @@ async function muatDaftarBuku() {
 
     try {
         await new Promise((resolve) => setTimeout(resolve, 600));
-        const res = await fetch("../data/bukuu.json");
+        const res = await fetch("../data/buku.json");
         if (!res.ok) {
             throw new Error("Gagal mengambil data (status " + res.status + ")");
         }
@@ -19,6 +19,7 @@ async function muatDaftarBuku() {
             tr.innerHTML =
                 "<td>" + buku.judul + "</td>" +
                 "<td>" + buku.pengarang + "</td>" +
+                "<td>" + (buku.kategori || "-") + "</td>" + // TAMBAHAN KATEGORI
                 "<td>" + buku.tahun + "</td>" +
                 "<td>" + buku.stok + "</td>" +
                 "<td>" +
