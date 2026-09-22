@@ -1,50 +1,25 @@
-<!DOCTYPE html> 
-<html lang="id"> 
-<head>
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login Petugas - SIMPUS-Mini</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>SIMPUS-Mini</h1> 
-       <button type="button" id="nav-toggle-btn" class="nav-toggle-label" aria-label="Menu">&#9776;</button>
-        <nav>
-            <ul>
-                <li><a href="index.html">Beranda</a></li>
-                <li><a href="buku/list.html">Daftar Buku</a></li>
-                <li><a href="buku/tambah.html">Tambah Buku</a></li>
-                <li><a href="Anggota/list.html">Daftar Anggota</a></li>
-                <li><a href="Anggota/tambah.html">Tambah Anggota</a></li>
-            </ul>
-        </nav>
-    </header>
+<?php
+$page_title = "Login Petugas";
+include __DIR__ . '/includes/header.php';
+?>
 
-    <main>
-        <section>
-            <h2>Login Petugas</h2>
-            <form>
-                <p>
-                    <label for="username">Username</label><br>
-                    <input type="text" id="username" name="username" required>
-                </p>
+<section>
+    <h2>Login Petugas</h2>
+    <form method="post" action="proses_login.php">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+        </div>
 
-                <p>
-                    <label for="password">Password</label><br>
-                    <input type="password" id="password" name="password" required>
-                </p>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
 
-                <p>
-                    <button type="submit">Masuk</button>
-                </p>
-            </form>
-        </section>
-    </main>
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Masuk</button>
+        </div>
+    </form>
+</section>
 
-    <footer>
-        <p>© 2026 SIMPUS-Mini — Jobsheet 4 - Valent Ridho - Absen 23</p>
-    </footer>
-    <script src="assets/js/app.js"></script>
-</body>
-</html>
+<?php include __DIR__ . '/includes/footer.php'; ?>
