@@ -1,4 +1,4 @@
-// Mengambil & menampilkan Daftar Buku secara asinkron dari data/buku.json
+// PERBAIKAN: assets/js/buku.js
 async function muatDaftarBuku() {
     const tbody = document.querySelector(".table-responsive table tbody");
     const loading = document.getElementById("loading-indicator");
@@ -19,7 +19,7 @@ async function muatDaftarBuku() {
             tr.innerHTML =
                 "<td>" + buku.judul + "</td>" +
                 "<td>" + buku.pengarang + "</td>" +
-                "<td>" + (buku.kategori || "-") + "</td>" + // TAMBAHAN KATEGORI
+                "<td>" + (buku.kategori || "-") + "</td>" +
                 "<td>" + buku.tahun + "</td>" +
                 "<td>" + buku.stok + "</td>" +
                 "<td>" +
@@ -27,10 +27,10 @@ async function muatDaftarBuku() {
                 "<button type=\"button\" class=\"btn-detail\">Detail</button> " +
                 "<button type=\"button\" class=\"btn-hapus\">Hapus</button>" +
                 "</td>";
-            tbody.appendChild(tr);
+            tbody.appendChild(tr); // Hapus baris innerHTML error yang sebelumnya ada di sini
         });
     } catch (err) {
-        tbody.innerHTML = "<tr><td colspan=\"5\">Gagal memuat data: " + err.message + "</td></tr>";
+        tbody.innerHTML = "<tr><td colspan=\"6\">Gagal memuat data: " + err.message + "</td></tr>";
     } finally {
         if (loading) loading.style.display = "none";
     }

@@ -16,8 +16,14 @@ function initHapusConfirm() {
         const btn = e.target.closest(".btn-hapus");
         if (!btn) return;
         const row = btn.closest("tr");
-        const nama = row ? row.querySelector("td")?.textContent : "data ini";
-        const yakin = confirm("Yakin ingin menghapus \"" + nama + "\"?");
+        
+        // Mengambil td kedua (nama) jika ada, jika tidak pakai td pertama (judul)
+        const cells = row ? row.querySelectorAll("td") : [];
+        const namaText = cells.length > 1 && cells[0].textContent.startsWith("A") 
+            ? cells[1].textContent 
+            : cells[0]?.textContent;
+
+        const yakin = confirm("Yakin ingin menghapus \"" + (namaText || "data ini") + "\"?");
         if (yakin && row) {
             row.remove();
         }
