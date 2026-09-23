@@ -1,36 +1,53 @@
 <?php
 session_start();
+require __DIR__ . '/../includes/koneksi.php';
 
-$nama = trim($_POST['nama'] ?? '');
-$nim = trim($_POST['nim'] ?? '');
+$nama  = trim($_POST['nama'] ?? '');
+$nim   = trim($_POST['nim'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $prodi = trim($_POST['prodi'] ?? '');
 
 $errors = [];
-if ($nama === '') {
-    $errors[] = "Nama wajib diisi.";
+
+if (empty($nama)) {
+    $errors[] = "Nama lengkap wajib diisi.";
 }
-if ($nim === '') {
+if (empty($nim)) {
     $errors[] = "NIM wajib diisi.";
+}
+if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = "Email tidak valid.";
+}
+if (empty($prodi)) {
+    $errors[] = "Program studi wajib diisi.";
 }
 
 if (!empty($errors)) {
-    $_SESSION['flash'] = ['type' => 'error', 'pesan' => implode(' ', $errors)];
+    $_SESSION['errors'] = $errors;
+    $_SESSION['old']    = $_POST;
     header('Location: tambah.php');
     exit;
 }
 
-if (!isset($_SESSION['anggota'])) {
-    $_SESSION['anggota'] = [];
+try {
+    $stmt = $pdo->prepare(
+        "INSERT INTO anggota (nama, no_anggota, alamat, no_hp) 
+         VALUES (:nama, :no_anggota, :alamat, :no_hp)"
+    );
+
+    $stmt->execute([
+        'nama'       => $nama,
+        'no_anggota' => $nim,
+        'alamat'     => $email,
+        'no_hp'      => $prodi
+    ]);
+
+    $_SESSION['flash'] = ['type' => 'success', 'pesan' => 'Anggota berhasil ditambahkan.'];
+    header('Location: list.php');
+    exit;
+} catch (PDOException $e) {
+    $_SESSION['errors'] = ["Gagal menyimpan data ke database: " . $e->getMessage()];
+    $_SESSION['old']    = $_POST;
+    header('Location: tambah.php');
+    exit;
 }
-
-$_SESSION['anggota'][] = [
-    'nama' => $nama,
-    'nim' => $nim,
-    'email' => $email,
-    'prodi' => $prodi,
-];
-
-$_SESSION['flash'] = ['type' => 'success', 'pesan' => 'Anggota berhasil ditambahkan.'];
-header('Location: list.php');
-exit;
