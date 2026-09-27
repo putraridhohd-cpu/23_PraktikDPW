@@ -1,53 +1,92 @@
 <?php
-session_start();
-require __DIR__ . '/../includes/koneksi.php';
+include_once __DIR__ . '/../includes/header.php';
+include_once __DIR__ . '/../includes/koneksi.php';
 
-$page_title = "Daftar Anggota";
-include __DIR__ . '/../includes/header.php';
-
-$daftarAnggota = $pdo->query("SELECT * FROM anggota ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
-
-$flash = $_SESSION['flash'] ?? null;
-unset($_SESSION['flash']);
+// MODIFIKASI: Menangkap kata kunci pencarian
+$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
 ?>
 
 <main>
-    <h2>Daftar Anggota</h2>
+    <section>
+        <h2>Daftar Anggota</h2>
 
-    <?php if ($flash): ?>
-        <div class="alert alert-<?php echo htmlspecialchars($flash['type']); ?>">
-            <?php echo htmlspecialchars($flash['pesan']); ?>
+        <!-- MODIFIKASI: Form Pencarian Nama / No Anggota -->
+        <div class="search-box">
+            <label for="keyword">Cari Anggota</label>
+            <form action="list.php" method="GET">
+                <input type="text" name="keyword" id="keyword" placeholder="Ketik nama atau no anggota..." value="<?= htmlspecialchars($keyword); ?>">
+            </form>
         </div>
-    <?php endif; ?>
 
-    <p><a href="tambah.php" class="btn">+ Tambah Anggota Baru</a></p>
-
-    <?php if (empty($daftarAnggota)): ?>
-        <p>Belum ada data anggota.</p>
-    <?php else: ?>
-        <table border="1" cellpadding="8" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>NIM (No. Anggota)</th>
-                    <th>Email (Alamat)</th>
-                    <th>Prodi (No. HP)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($daftarAnggota as $index => $anggota): ?>
+        <div class="table-responsive">
+            <table>
+                <thead>
                     <tr>
-                        <td><?php echo $index + 1; ?></td>
-                        <td><?php echo htmlspecialchars($anggota['nama']); ?></td>
-                        <td><?php echo htmlspecialchars($anggota['no_anggota']); ?></td>
-                        <td><?php echo htmlspecialchars($anggota['alamat']); ?></td>
-                        <td><?php echo htmlspecialchars($anggota['no_hp']); ?></td>
+                        <th>No Anggota</th>
+                        <th>Nama</th>
+                        <th>Alamat</th>
+                        <th>No HP</th>
+                        <th>Aksi</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
+                </thead>
+                <tbody>
+                    <?php
+                    $data_anggota = [];
+
+                    try {
+                        if (isset($pdo)) {
+                            // MODIFIKASI: Query PostgreSQL/MySQL menggunakan PDO
+                            if (!empty($keyword)) {
+                                $stmt = $pdo->prepare("SELECT * FROM anggota WHERE nama ILIKE :kw OR no_anggota ILIKE :kw ORDER BY id DESC");
+                                $stmt->execute(['kw' => '%' . $keyword . '%']);
+                            } else {
+                                $stmt = $pdo->query("SELECT * FROM anggota ORDER BY id DESC");
+                            }
+                            $data_anggota = $stmt->fetchAll();
+                        }
+                    } catch (Exception $e) {
+                        // Fallback ke pg_query jika PDO tidak aktif
+                        if (isset($koneksi) && is_resource($koneksi)) {
+                            $res = pg_query($koneksi, "SELECT * FROM anggota ORDER BY id DESC");
+                            if ($res) {
+                                while ($row = pg_fetch_assoc($res)) {
+                                    $data_anggota[] = $row;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!empty($data_anggota)) {
+                        foreach ($data_anggota as $row) {
+                    ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['no_anggota'] ?? '-'); ?></td>
+                                <td><?= htmlspecialchars($row['nama']); ?></td>
+                                <td><?= htmlspecialchars($row['alamat'] ?? '-'); ?></td>
+                                <td><?= htmlspecialchars($row['no_hp'] ?? '-'); ?></td>
+                                <td>
+                                    <!-- MODIFIKASI: Tombol Aksi Edit, Detail, dan Hapus seragam dengan daftar buku -->
+                                    <a href="edit.php?id=<?= $row['id']; ?>" class="btn-edit">Edit</a>
+                                    <a href="detail.php?id=<?= $row['id']; ?>" class="btn-detail">Detail</a>
+                                    <a href="proses_hapus.php?id=<?= $row['id']; ?>" class="btn-hapus" onclick="return confirm('Yakin ingin menghapus anggota ini?')">Hapus</a>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    } else {
+                    ?>
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 1.5rem; color: #666;">
+                                Belum ada data anggota. Silakan tambah lewat menu "Tambah Anggota".
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php
+include_once __DIR__ . '/../includes/footer.php';
+?>

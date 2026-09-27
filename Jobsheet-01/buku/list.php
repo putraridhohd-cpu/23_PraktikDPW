@@ -1,57 +1,85 @@
 <?php
-session_start();
-require __DIR__ . '/../includes/koneksi.php';
+include_once __DIR__ . '/../includes/header.php';
+include_once __DIR__ . '/../includes/koneksi.php';
 
-$page_title = "Daftar Buku";
-include __DIR__ . '/../includes/header.php';
-
-$daftarBuku = $pdo->query("SELECT * FROM buku ORDER BY id DESC")->fetchAll(PDO::FETCH_ASSOC);
-
-$flash = $_SESSION['flash'] ?? null;
-unset($_SESSION['flash']);
+// Menangkap kata kunci pencarian
+$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
 ?>
 
 <main>
-    <h2>Daftar Buku</h2>
+    <section>
+        <h2>Daftar Buku</h2>
 
-    <?php if ($flash): ?>
-        <div class="alert alert-<?php echo htmlspecialchars($flash['type']); ?>">
-            <?php echo htmlspecialchars($flash['pesan']); ?>
+        <!-- Form Pencarian Judul Buku -->
+        <div class="search-box">
+            <label for="keyword">Cari Judul Buku</label>
+            <form action="list.php" method="GET">
+                <input type="text" name="keyword" id="keyword" placeholder="Ketik judul buku..." value="<?= htmlspecialchars($keyword); ?>">
+            </form>
         </div>
-    <?php endif; ?>
 
-    <p><a href="tambah.php" class="btn">+ Tambah Buku Baru</a></p>
-
-    <?php if (empty($daftarBuku)): ?>
-        <p>Belum ada data buku.</p>
-    <?php else: ?>
-        <table border="1" cellpadding="8" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Judul</th>
-                    <th>Pengarang</th>
-                    <th>Tahun</th>
-                    <th>ISBN</th>
-                    <th>Stok</th>
-                    <th>Kategori</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($daftarBuku as $index => $buku): ?>
+        <div class="table-responsive">
+            <table>
+                <thead>
                     <tr>
-                        <td><?php echo $index + 1; ?></td>
-                        <td><?php echo htmlspecialchars($buku['judul']); ?></td>
-                        <td><?php echo htmlspecialchars($buku['pengarang']); ?></td>
-                        <td><?php echo htmlspecialchars($buku['tahun']); ?></td>
-                        <td><?php echo htmlspecialchars($buku['isbn'] ?? '-'); ?></td>
-                        <td><?php echo htmlspecialchars($buku['stok']); ?></td>
-                        <td><?php echo htmlspecialchars($buku['kategori'] ?? '-'); ?></td>
+                        <th>Judul</th>
+                        <th>Pengarang</th>
+                        <th>kategori</th>
+                        <th>Tahun</th>
+                        <th>Stock</th>
+                        <th>Aksi</th>
                     </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
+                </thead>
+                <tbody>
+                    <?php
+                    $data_buku = [];
+
+                    try {
+                        if (isset($pdo)) {
+                            // MODIFIKASI: Menggunakan PDO PostgreSQL/MySQL secara konsisten
+                            if (!empty($keyword)) {
+                                $stmt = $pdo->prepare("SELECT * FROM buku WHERE judul ILIKE :kw ORDER BY id DESC");
+                                $stmt->execute(['kw' => '%' . $keyword . '%']);
+                            } else {
+                                $stmt = $pdo->query("SELECT * FROM buku ORDER BY id DESC");
+                            }
+                            $data_buku = $stmt->fetchAll();
+                        }
+                    } catch (Exception $e) {
+                        // Fallback jika kueri mengalami error
+                    }
+
+                    if (!empty($data_buku)) {
+                        foreach ($data_buku as $row) {
+                    ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['judul']); ?></td>
+                                <td><?= htmlspecialchars($row['pengarang']); ?></td>
+                                <td><?= htmlspecialchars($row['kategori'] ?? '-'); ?></td>
+                                <td><?= htmlspecialchars($row['tahun']); ?></td>
+                                <td><?= htmlspecialchars($row['stok']); ?></td>
+                                <td>
+                                    <a href="edit.php?id=<?= $row['id']; ?>" class="btn-edit">Edit</a>
+                                    <a href="detail.php?id=<?= $row['id']; ?>" class="btn-detail">Detail</a>
+                                    <a href="proses_hapus.php?id=<?= $row['id']; ?>" class="btn-hapus" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>
+                                </td>
+                            </tr>
+                    <?php
+                        }
+                    } else {
+                    ?>
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 1.5rem; color: #666;">
+                                Belum ada data buku. Silakan tambah lewat menu "Tambah Buku".
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </main>
 
-<?php include __DIR__ . '/../includes/footer.php'; ?>
+<?php
+include_once __DIR__ . '/../includes/footer.php';
+?>

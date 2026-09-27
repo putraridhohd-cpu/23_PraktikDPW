@@ -1,57 +1,53 @@
 <?php
-session_start();
-require __DIR__ . '/../includes/koneksi.php';
+include_once __DIR__ . '/../includes/koneksi.php';
 
-$judul     = trim($_POST['judul'] ?? '');
-$pengarang = trim($_POST['pengarang'] ?? '');
-$tahun     = trim($_POST['tahun'] ?? '');
-$isbn      = trim($_POST['isbn'] ?? '');
-$stok       = trim($_POST['stok'] ?? '');
-$kategori  = trim($_POST['kategori'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $judul     = trim($_POST['judul'] ?? '');
+    $pengarang = trim($_POST['pengarang'] ?? '');
+    $tahun     = !empty($_POST['tahun']) ? (int)$_POST['tahun'] : date('Y');
+    $isbn      = trim($_POST['isbn'] ?? '');
+    $stok      = !empty($_POST['stok']) ? (int)$_POST['stok'] : 0;
+    $kategori  = trim($_POST['kategori'] ?? 'Fiksi');
 
-$errors = [];
+    if (empty($judul) || empty($pengarang)) {
+        die("Judul dan Pengarang wajib diisi! <a href='tambah.php'>Kembali</a>");
+    }
 
-if (empty($judul)) {
-    $errors[] = "Judul buku wajib diisi.";
+    try {
+        if (isset($pdo)) {
+            // MODIFIKASI: Query Insert PostgreSQL/MySQL via PDO Prepared Statement
+            $sql = "INSERT INTO buku (judul, pengarang, tahun, isbn, stok, kategori) 
+                    VALUES (:judul, :pengarang, :tahun, :isbn, :stok, :kategori)";
+            
+            $stmt = $pdo->prepare($sql);
+            $simpan = $stmt->execute([
+                ':judul'     => $judul,
+                ':pengarang' => $pengarang,
+                ':tahun'     => $tahun,
+                ':isbn'      => $isbn,
+                ':stok'      => $stok,
+                ':kategori'  => $kategori
+            ]);
+
+            if ($simpan) {
+                header("Location: list.php");
+                exit();
+            }
+        } else if (isset($koneksi) && is_resource($koneksi)) {
+            // Fallback pg_query
+            $query = "INSERT INTO buku (judul, pengarang, tahun, isbn, stok, kategori) 
+                      VALUES ($1, $2, $3, $4, $5, $6)";
+            $res = pg_query_params($koneksi, $query, [$judul, $pengarang, $tahun, $isbn, $stok, $kategori]);
+            if ($res) {
+                header("Location: list.php");
+                exit();
+            }
+        }
+    } catch (PDOException $e) {
+        die("Gagal menyimpan data ke PostgreSQL: " . $e->getMessage() . " <br><a href='tambah.php'>Kembali</a>");
+    }
+} else {
+    header("Location: list.php");
+    exit();
 }
-if (empty($pengarang)) {
-    $errors[] = "Nama pengarang wajib diisi.";
-}
-if (empty($tahun) || !is_numeric($tahun)) {
-    $errors[] = "Tahun terbit harus berupa angka.";
-}
-if (empty($stok) || !is_numeric($stok) || (int)$stok < 0) {
-    $errors[] = "Stok harus berupa angka non-negatif.";
-}
-
-if (!empty($errors)) {
-    $_SESSION['errors'] = $errors;
-    $_SESSION['old']    = $_POST;
-    header('Location: tambah.php');
-    exit;
-}
-
-try {
-    $stmt = $pdo->prepare(
-        "INSERT INTO buku (judul, pengarang, tahun, isbn, stok, kategori) 
-         VALUES (:judul, :pengarang, :tahun, :isbn, :stok, :kategori)"
-    );
-
-    $stmt->execute([
-        'judul'     => $judul,
-        'pengarang' => $pengarang,
-        'tahun'     => (int) $tahun,
-        'isbn'      => $isbn,
-        'stok'      => (int) $stok,
-        'kategori'  => $kategori,
-    ]);
-
-    $_SESSION['flash'] = ['type' => 'success', 'pesan' => 'Buku berhasil ditambahkan.'];
-    header('Location: list.php');
-    exit;
-} catch (PDOException $e) {
-    $_SESSION['errors'] = ["Gagal menyimpan data ke database: " . $e->getMessage()];
-    $_SESSION['old']    = $_POST;
-    header('Location: tambah.php');
-    exit;
-}
+?>

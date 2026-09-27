@@ -1,33 +1,42 @@
 <?php
-session_start();
-require __DIR__ . '/includes/koneksi.php';
+include_once __DIR__ . '/includes/header.php';
+include_once __DIR__ . '/includes/koneksi.php';
 
-$page_title = "Beranda";
-include __DIR__ . '/includes/header.php';
+// MODIFIKASI: Menghitung total data buku dan anggota secara aman
+$total_buku = 0;
+$total_anggota = 0;
 
-$totalBuku    = $pdo->query("SELECT COUNT(*) FROM buku")->fetchColumn();
-$totalAnggota = $pdo->query("SELECT COUNT(*) FROM anggota")->fetchColumn();
+try {
+    if (isset($pdo)) {
+        $stmt_buku = $pdo->query("SELECT COUNT(*) FROM buku");
+        $total_buku = $stmt_buku->fetchColumn();
+
+        $stmt_anggota = $pdo->query("SELECT COUNT(*) FROM anggota");
+        $total_anggota = $stmt_anggota->fetchColumn();
+    }
+} catch (Exception $e) {
+    // Abaikan jika tabel belum terisi/dibuat
+}
 ?>
 
 <main>
-    <section>
-        <h2>Selamat Datang di SIMPUS Mini</h2>
-        <p>Sistem Informasi Perpustakaan Sederhana untuk mengelola data buku dan anggota.</p>
-    </section>
+    <section class="hero-section" style="padding: 2rem 0;">
+        <h2>Selamat Datang di SIMPUS-Mini</h2>
+        <p>Sistem Informasi Manajemen Perpustakaan Sederhana.</p>
 
-    <section>
-        <h2>Ringkasan Dashboard</h2>
-        <div style="display: flex; gap: 20px; margin-top: 15px;">
-            <article style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 150px;">
-                <h3>Total Buku</h3>
-                <p style="font-size: 24px; font-weight: bold;"><?php echo $totalBuku; ?></p>
-            </article>
-            <article style="border: 1px solid #ccc; padding: 15px; border-radius: 5px; width: 150px;">
-                <h3>Total Anggota</h3>
-                <p style="font-size: 24px; font-weight: bold;"><?php echo $totalAnggota; ?></p>
-            </article>
+        <div style="display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap;">
+            <div style="background: #e8f5e9; border-left: 5px solid #2e7d32; padding: 1.5rem; border-radius: 6px; flex: 1; min-width: 200px;">
+                <h3 style="margin: 0 0 0.5rem 0; color: #2e7d32;">Total Buku</h3>
+                <p style="font-size: 2rem; font-weight: bold; margin: 0;"><?= $total_buku; ?></p>
+            </div>
+            <div style="background: #e3f2fd; border-left: 5px solid #1565c0; padding: 1.5rem; border-radius: 6px; flex: 1; min-width: 200px;">
+                <h3 style="margin: 0 0 0.5rem 0; color: #1565c0;">Total Anggota</h3>
+                <p style="font-size: 2rem; font-weight: bold; margin: 0;"><?= $total_anggota; ?></p>
+            </div>
         </div>
     </section>
 </main>
 
-<?php include __DIR__ . '/includes/footer.php'; ?>
+<?php
+include_once __DIR__ . '/includes/footer.php';
+?>

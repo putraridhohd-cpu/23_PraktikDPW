@@ -1,53 +1,39 @@
 <?php
-session_start();
-require __DIR__ . '/../includes/koneksi.php';
+include_once __DIR__ . '/../includes/koneksi.php';
 
-$nama  = trim($_POST['nama'] ?? '');
-$nim   = trim($_POST['nim'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$prodi = trim($_POST['prodi'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $no_anggota = trim($_POST['no_anggota'] ?? '');
+    $nama       = trim($_POST['nama'] ?? '');
+    $alamat     = trim($_POST['alamat'] ?? '');
+    $no_hp      = trim($_POST['no_hp'] ?? '');
 
-$errors = [];
+    if (empty($no_anggota) || empty($nama)) {
+        die("No Anggota dan Nama wajib diisi! <a href='tambah.php'>Kembali</a>");
+    }
 
-if (empty($nama)) {
-    $errors[] = "Nama lengkap wajib diisi.";
+    try {
+        if (isset($pdo)) {
+            $sql = "INSERT INTO anggota (no_anggota, nama, alamat, no_hp) 
+                    VALUES (:no_anggota, :nama, :alamat, :no_hp)";
+            
+            $stmt = $pdo->prepare($sql);
+            $simpan = $stmt->execute([
+                ':no_anggota' => $no_anggota,
+                ':nama'       => $nama,
+                ':alamat'     => $alamat,
+                ':no_hp'      => $no_hp
+            ]);
+
+            if ($simpan) {
+                header("Location: list.php");
+                exit();
+            }
+        }
+    } catch (PDOException $e) {
+        die("Gagal menyimpan data anggota: " . $e->getMessage() . " <br><a href='tambah.php'>Kembali</a>");
+    }
+} else {
+    header("Location: list.php");
+    exit();
 }
-if (empty($nim)) {
-    $errors[] = "NIM wajib diisi.";
-}
-if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $errors[] = "Email tidak valid.";
-}
-if (empty($prodi)) {
-    $errors[] = "Program studi wajib diisi.";
-}
-
-if (!empty($errors)) {
-    $_SESSION['errors'] = $errors;
-    $_SESSION['old']    = $_POST;
-    header('Location: tambah.php');
-    exit;
-}
-
-try {
-    $stmt = $pdo->prepare(
-        "INSERT INTO anggota (nama, no_anggota, alamat, no_hp) 
-         VALUES (:nama, :no_anggota, :alamat, :no_hp)"
-    );
-
-    $stmt->execute([
-        'nama'       => $nama,
-        'no_anggota' => $nim,
-        'alamat'     => $email,
-        'no_hp'      => $prodi
-    ]);
-
-    $_SESSION['flash'] = ['type' => 'success', 'pesan' => 'Anggota berhasil ditambahkan.'];
-    header('Location: list.php');
-    exit;
-} catch (PDOException $e) {
-    $_SESSION['errors'] = ["Gagal menyimpan data ke database: " . $e->getMessage()];
-    $_SESSION['old']    = $_POST;
-    header('Location: tambah.php');
-    exit;
-}
+?>
