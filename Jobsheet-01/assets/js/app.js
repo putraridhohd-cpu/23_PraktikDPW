@@ -3,29 +3,35 @@ function initNavToggle() {
     const toggleBtn = document.getElementById("nav-toggle-btn");
     const nav = document.querySelector("header nav");
     if (!toggleBtn || !nav) return;
-    
+
     toggleBtn.addEventListener("click", function () {
         nav.classList.toggle("nav-open");
     });
 }
 
-// ===== 2. Konfirmasi Hapus Data di Tabel =====
-// Modifikasi fungsi init confirm
+// ===== 2. Konfirmasi Hapus Data (Form Hapus) =====
+// [MODIFIKASI] Tombol Hapus sekarang berada di dalam <form class="form-hapus" method="post">
+// yang benar-benar mengirim request ke hapus.php. Konfirmasi dilakukan pada event "submit"
+// supaya bisa dibatalkan (preventDefault) SEBELUM data terkirim ke server.
 function initHapusConfirm() {
-    document.addEventListener("click", function (e) {
-        const btn = e.target.closest(".btn-hapus");
-        if (!btn) return;
-        const row = btn.closest("tr");
-        
-        // Mengambil td kedua (nama) jika ada, jika tidak pakai td pertama (judul)
-        const cells = row ? row.querySelectorAll("td") : [];
-        const namaText = cells.length > 1 && cells[0].textContent.startsWith("A") 
-            ? cells[1].textContent 
-            : cells[0]?.textContent;
+    // [MODIFIKASI] Event delegation memakai "submit" (sebelumnya "click")
+    document.addEventListener("submit", function (e) {
+        const form = e.target;
 
-        const yakin = confirm("Yakin ingin menghapus \"" + (namaText || "data ini") + "\"?");
-        if (yakin && row) {
-            row.remove();
+        // [BARU] Hanya tangani form Hapus; form lain (cari, tambah, edit) dibiarkan normal
+        if (!form.classList.contains("form-hapus")) return;
+
+        const row = form.closest("tr");
+
+        // [MODIFIKASI] Nama diambil dari atribut data-nama pada form; cadangannya sel <td> pertama
+        const nama = (form.dataset.nama || (row ? row.querySelector("td")?.textContent : "") || "data ini").trim();
+
+        const yakin = confirm("Yakin ingin menghapus \"" + nama + "\"?");
+
+        // [MODIFIKASI] Logika dibalik: kalau pengguna menekan Cancel, batalkan pengiriman form.
+        // Kalau OK, form lanjut submit ke hapus.php (row.remove() tidak dipakai lagi).
+        if (!yakin) {
+            e.preventDefault();
         }
     });
 }
@@ -35,7 +41,7 @@ function initTableFilter() {
     const input = document.getElementById("search-input");
     const table = document.querySelector(".table-responsive table");
     if (!input || !table) return;
-    
+
     input.addEventListener("keyup", function () {
         const keyword = input.value.toLowerCase();
         const rows = table.querySelectorAll("tbody tr");
@@ -46,7 +52,7 @@ function initTableFilter() {
     });
 }
 
-// ===== 4. Validasi Form Tambah =====
+// ===== 4. Validasi Form Tambah / Edit =====
 function tampilkanError(input, pesan) {
     hapusError(input);
     const span = document.createElement("span");
@@ -65,18 +71,18 @@ function hapusError(input) {
 function initValidasiForm() {
     const form = document.getElementById("form-tambah");
     if (!form) return;
-    
+
     form.addEventListener("submit", function (e) {
         let valid = true;
         const judul = form.querySelector("[name='judul'], [name='nama']");
-        
+
         if (judul && judul.value.trim() === "") {
             tampilkanError(judul, "Field ini wajib diisi.");
             valid = false;
         } else if (judul) {
             hapusError(judul);
         }
-        
+
         if (!valid) {
             e.preventDefault(); // Mencegah form terkirim jika kosong
         }

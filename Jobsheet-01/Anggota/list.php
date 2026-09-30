@@ -1,91 +1,148 @@
 <?php
-include_once __DIR__ . '/../includes/header.php';
-include_once __DIR__ . '/../includes/koneksi.php';
+// [MODIFIKASI] Logika PHP (session, koneksi, query) dipindah ke atas file, sebelum HTML dicetak
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../includes/koneksi.php';
 
-// MODIFIKASI: Menangkap kata kunci pencarian
-$keyword = isset($_GET['keyword']) ? trim($_GET['keyword']) : '';
+// [BARU] Ambil flash message (hasil edit/hapus) lalu hapus dari session agar tidak muncul dua kali
+$flash = $_SESSION['flash'] ?? null;
+unset($_SESSION['flash']);
+
+// [BARU] Pengaturan pagination: 5 baris per halaman
+$perPage = 5;
+
+// [MODIFIKASI] Parameter pencarian diganti dari "keyword" menjadi "q" (sesuai Jobsheet 9)
+$keyword = (isset($_GET['q']) && is_string($_GET['q'])) ? trim($_GET['q']) : '';
+
+// [BARU] Nomor halaman diambil dari URL (?page=2), minimal 1
+$page = max(1, (int) ($_GET['page'] ?? 1));
+
+// [BARU] Nilai awal variabel agar aman jika query gagal
+$daftarAnggota = [];
+$totalRows     = 0;
+$totalPages    = 1;
+$errorDb       = null;
+
+try {
+    // [BARU] Hitung total baris (mengikuti pencarian bila ada). Placeholder dibedakan (:kw1, :kw2) agar aman di PDO PostgreSQL.
+    if ($keyword !== '') {
+        $hitung = $pdo->prepare("SELECT COUNT(*) FROM anggota WHERE nama ILIKE :kw1 OR no_anggota ILIKE :kw2");
+        $hitung->execute(['kw1' => '%' . $keyword . '%', 'kw2' => '%' . $keyword . '%']);
+    } else {
+        $hitung = $pdo->query("SELECT COUNT(*) FROM anggota");
+    }
+    $totalRows  = (int) $hitung->fetchColumn();
+    $totalPages = max(1, (int) ceil($totalRows / $perPage));
+
+    // [BARU] Cegah nomor halaman melebihi total halaman, lalu hitung OFFSET
+    $page   = min($page, $totalPages);
+    $offset = ($page - 1) * $perPage;
+
+    // [MODIFIKASI] Query data memakai ILIKE (nama atau no_anggota) + ORDER BY + LIMIT/OFFSET
+    if ($keyword !== '') {
+        $stmt = $pdo->prepare("SELECT * FROM anggota WHERE nama ILIKE :kw1 OR no_anggota ILIKE :kw2 ORDER BY id DESC LIMIT :limit OFFSET :offset");
+        $stmt->bindValue(':kw1', '%' . $keyword . '%');
+        $stmt->bindValue(':kw2', '%' . $keyword . '%');
+    } else {
+        $stmt = $pdo->prepare("SELECT * FROM anggota ORDER BY id DESC LIMIT :limit OFFSET :offset");
+    }
+    $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);   // [BARU] PARAM_INT wajib untuk LIMIT/OFFSET
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    $daftarAnggota = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log($e->getMessage());
+    $errorDb = 'Data anggota gagal dimuat. Periksa koneksi dan tabel database.';
+}
+
+// [BARU] Tambahan query string agar kata kunci pencarian ikut terbawa saat pindah halaman
+$queryTambahan = $keyword !== '' ? '&amp;q=' . urlencode($keyword) : '';
+
+$page_title = 'Daftar Anggota'; // [BARU] Judul pada tab browser
+include_once __DIR__ . '/../includes/header.php';
 ?>
 
-<main>
-    <section>
-        <h2>Daftar Anggota</h2>
+<section>
+    <h2>Daftar Anggota</h2>
 
-        <!-- MODIFIKASI: Form Pencarian Nama / No Anggota -->
-        <div class="search-box">
-            <label for="keyword">Cari Anggota</label>
-            <form action="list.php" method="GET">
-                <input type="text" name="keyword" id="keyword" placeholder="Ketik nama atau no anggota..." value="<?= htmlspecialchars($keyword); ?>">
-            </form>
+    <!-- [BARU] Flash message hasil edit / hapus -->
+    <?php if ($flash): ?>
+        <div class="flash flash-<?= htmlspecialchars($flash['type'] ?? 'success'); ?>">
+            <?= htmlspecialchars($flash['pesan'] ?? ''); ?>
         </div>
+    <?php endif; ?>
 
-        <div class="table-responsive">
-            <table>
-                <thead>
-                    <tr>
-                        <th>No Anggota</th>
-                        <th>Nama</th>
-                        <th>Alamat</th>
-                        <th>No HP</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $data_anggota = [];
+    <?php if ($errorDb): ?>
+        <div class="flash flash-error"><?= htmlspecialchars($errorDb); ?></div>
+    <?php endif; ?>
 
-                    try {
-                        if (isset($pdo)) {
-                            // MODIFIKASI: Query PostgreSQL/MySQL menggunakan PDO
-                            if (!empty($keyword)) {
-                                $stmt = $pdo->prepare("SELECT * FROM anggota WHERE nama ILIKE :kw OR no_anggota ILIKE :kw ORDER BY id DESC");
-                                $stmt->execute(['kw' => '%' . $keyword . '%']);
-                            } else {
-                                $stmt = $pdo->query("SELECT * FROM anggota ORDER BY id DESC");
-                            }
-                            $data_anggota = $stmt->fetchAll();
-                        }
-                    } catch (Exception $e) {
-                        // Fallback ke pg_query jika PDO tidak aktif
-                        if (isset($koneksi) && is_resource($koneksi)) {
-                            $res = pg_query($koneksi, "SELECT * FROM anggota ORDER BY id DESC");
-                            if ($res) {
-                                while ($row = pg_fetch_assoc($res)) {
-                                    $data_anggota[] = $row;
-                                }
-                            }
-                        }
-                    }
+    <!-- [MODIFIKASI] Form pencarian: method GET, field bernama q, id search-input (dipakai filter instan app.js), plus tombol Cari -->
+    <div class="search-box">
+        <form method="get" action="list.php">
+            <span>
+                <label for="search-input">Cari Anggota</label>
+                <input type="text" id="search-input" name="q" placeholder="Ketik nama atau no anggota..." value="<?= htmlspecialchars($keyword); ?>">
+            </span>
+            <button type="submit">Cari</button>
+        </form>
+    </div>
 
-                    if (!empty($data_anggota)) {
-                        foreach ($data_anggota as $row) {
-                    ?>
-                            <tr>
-                                <td><?= htmlspecialchars($row['no_anggota'] ?? '-'); ?></td>
-                                <td><?= htmlspecialchars($row['nama']); ?></td>
-                                <td><?= htmlspecialchars($row['alamat'] ?? '-'); ?></td>
-                                <td><?= htmlspecialchars($row['no_hp'] ?? '-'); ?></td>
-                                <td>
-                                    <!-- MODIFIKASI: Tombol Aksi Edit, Detail, dan Hapus seragam dengan daftar buku -->
-                                    <a href="edit.php?id=<?= $row['id']; ?>" class="btn-edit">Edit</a>
-                                    <a href="detail.php?id=<?= $row['id']; ?>" class="btn-detail">Detail</a>
-                                    <a href="proses_hapus.php?id=<?= $row['id']; ?>" class="btn-hapus" onclick="return confirm('Yakin ingin menghapus anggota ini?')">Hapus</a>
-                                </td>
-                            </tr>
-                    <?php
-                        }
-                    } else {
-                    ?>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>No Anggota</th>
+                    <th>Nama</th>
+                    <th>Alamat</th>
+                    <th>No HP</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($daftarAnggota)): ?>
+                    <?php foreach ($daftarAnggota as $row): ?>
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 1.5rem; color: #666;">
-                                Belum ada data anggota. Silakan tambah lewat menu "Tambah Anggota".
+                            <td><?= htmlspecialchars($row['no_anggota'] ?? '-'); ?></td>
+                            <td><?= htmlspecialchars($row['nama'] ?? ''); ?></td>
+                            <td><?= htmlspecialchars($row['alamat'] ?? '-'); ?></td>
+                            <td><?= htmlspecialchars($row['no_hp'] ?? '-'); ?></td>
+                            <td>
+                                <!-- [MODIFIKASI] Tautan Edit membawa id lewat URL (dibaca $_GET['id'] di edit.php) -->
+                                <a href="edit.php?id=<?= (int) $row['id']; ?>" class="btn-edit">Edit</a>
+
+                                <!-- [MODIFIKASI] Tombol Hapus kini <form method="post"> sungguhan (bukan link GET), id dibawa lewat input hidden -->
+                                <form class="form-hapus" method="post" action="hapus.php" data-nama="<?= htmlspecialchars($row['nama'] ?? ''); ?>">
+                                    <input type="hidden" name="id" value="<?= (int) $row['id']; ?>">
+                                    <button type="submit" class="btn-hapus">Hapus</button>
+                                </form>
                             </td>
                         </tr>
-                    <?php } ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
-</main>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 1.5rem; color: #666;">
+                            <?php if ($keyword !== ''): ?>
+                                <!-- [BARU] Pesan khusus jika pencarian tidak menemukan hasil -->
+                                Tidak ada anggota dengan kata kunci "<?= htmlspecialchars($keyword); ?>".
+                            <?php else: ?>
+                                Belum ada data anggota. Silakan tambah lewat menu "Tambah Anggota".
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- [BARU] Navigasi angka halaman; halaman aktif diberi class "active" -->
+    <nav class="pagination">
+        <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+            <a href="list.php?page=<?= $i; ?><?= $queryTambahan; ?>"
+               class="<?= $i === $page ? 'active' : ''; ?>"><?= $i; ?></a>
+        <?php endfor; ?>
+    </nav>
+</section>
 
 <?php
 include_once __DIR__ . '/../includes/footer.php';

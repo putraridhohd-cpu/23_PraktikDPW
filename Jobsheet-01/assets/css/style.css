@@ -130,6 +130,34 @@ main section:nth-of-type(2) article p {
     font-size: 1rem;
 }
 
+/* [BARU] Form pencarian: kolom input dan tombol "Cari" sejajar horizontal */
+.search-box form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end; /* [BARU] sejajarkan berdasarkan tepi bawah (label+input lebih tinggi dari tombol) */
+}
+
+/* [BARU] Pembungkus label + input */
+.search-box form span {
+    flex: 1 1 auto;
+    max-width: 320px;
+}
+
+/* [BARU] Tombol "Cari" (selector dibuat spesifik agar tidak kalah dari aturan form button[type="submit"]) */
+.search-box form button[type="submit"] {
+    padding: 0.55rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #1e5e3a;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.search-box form button[type="submit"]:hover {
+    background-color: #174a2d;
+}
+
 /* ===== Tabel Responsif Wrapper ===== */
 .table-responsive {
     overflow-x: auto;
@@ -201,6 +229,7 @@ td a.btn-hapus,
     text-align: center;
 }
 
+/* Tautan Edit berwarna oranye (jobsheet 9 bab 6.1: <a> disamarkan menjadi tombol) */
 td a.btn-edit,
 .btn-edit {
     background-color: #f0ad4e;
@@ -226,6 +255,31 @@ td a.btn-hapus:hover {
     text-decoration: none;
     opacity: 0.9;
     color: #fff;
+}
+
+/* [BARU] Form Hapus dibuat inline supaya sejajar dengan tombol Edit dalam satu sel <td> */
+td form.form-hapus {
+    display: inline;
+}
+
+/* [BARU] Tombol Hapus (kini <button> di dalam form). Selector dibuat spesifik agar tidak
+   tertimpa aturan "form button[type=submit]" yang berwarna hijau dan berukuran besar. */
+td form.form-hapus button.btn-hapus {
+    display: inline-block;
+    padding: 0.35rem 0.7rem;
+    margin-right: 0;
+    border: none;
+    border-radius: 4px;
+    background-color: #d9534f;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+td form.form-hapus button.btn-hapus:hover {
+    background-color: #c9302c;
 }
 
 /* ===== Form ===== */
@@ -270,6 +324,59 @@ form button[type="submit"]:hover {
     color: #d9534f;
     font-size: 0.85rem;
     margin-top: 0.25rem;
+}
+
+/* [BARU] ===== Navigasi Pagination ===== */
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.pagination a {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #cdd4da;
+    border-radius: 4px;
+    color: #1e5e3a;
+}
+
+.pagination a:hover {
+    background-color: #eef4fa;
+    text-decoration: none;
+}
+
+/* [BARU] Halaman yang sedang dibuka disorot penuh dengan warna tema */
+.pagination a.active {
+    background-color: #1e5e3a;
+    color: #fff;
+    border-color: #1e5e3a;
+}
+
+/* [MODIFIKASI] ===== Flash Message =====
+   Dipindah KELUAR dari @media (max-width: 480px) agar tampil di semua ukuran layar,
+   dan ditambah varian warning. */
+.flash {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.flash-error,
+.flash-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.flash-warning {
+    background-color: #fff3cd;
+    color: #856404;
 }
 
 /* ===== Footer ===== */
@@ -327,21 +434,5 @@ footer {
     form select,
     .search-box input {
         max-width: 100%;
-    }
-
-    /* ===== Flash Message ===== */
-    .flash {
-        padding: 0.75rem 1rem;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-        font-weight: 500;
-    }
-    .flash-success {
-        background-color: #d4edda;
-        color: #155724;
-    }
-    .flash-error {
-        background-color: #f8d7da;
-        color: #721c24;
     }
 }
