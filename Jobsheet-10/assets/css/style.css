@@ -1,0 +1,438 @@
+/* ===== Reset & Base ===== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #2b2b2b;
+    background-color: #f5f6f8;
+    line-height: 1.5;
+}
+
+a {
+    color: #1e5e3a;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Header & Navbar (Flexbox) ===== */
+header {
+    background-color: #1e5e3a;
+    color: #fff;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+header h1 {
+    font-size: 1.4rem;
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.25rem;
+}
+
+header nav a {
+    color: #fff;
+    font-weight: 500;
+}
+
+/* Tombol Hamburger di Desktop (Disembunyikan) */
+.nav-toggle-label {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* ===== Main Layout ===== */
+main {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+section {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+section h2 {
+    margin-bottom: 1rem;
+    color: #1e5e3a;
+}
+
+/* ===== Kartu Statistik (CSS Grid) ===== */
+main section:nth-of-type(2) {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+main section:nth-of-type(2) h2 {
+    grid-column: 1 / -1;
+    margin-bottom: 1rem;
+}
+
+main section:nth-of-type(2) article {
+    background-color: #eef4fa;
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-align: center;
+}
+
+main section:nth-of-type(2) article h3 {
+    font-size: 0.95rem;
+    color: #55677a;
+    margin-bottom: 0.5rem;
+}
+
+main section:nth-of-type(2) article p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1e5e3a;
+}
+
+/* ===== Kotak Pencarian / Search Box ===== */
+.search-box {
+    margin-bottom: 1rem;
+}
+
+.search-box label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.search-box input {
+    width: 100%;
+    max-width: 320px;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #cdd4da;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* [BARU] Form pencarian: kolom input dan tombol "Cari" sejajar horizontal */
+.search-box form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: flex-end; /* [BARU] sejajarkan berdasarkan tepi bawah (label+input lebih tinggi dari tombol) */
+}
+
+/* [BARU] Pembungkus label + input */
+.search-box form span {
+    flex: 1 1 auto;
+    max-width: 320px;
+}
+
+/* [BARU] Tombol "Cari" (selector dibuat spesifik agar tidak kalah dari aturan form button[type="submit"]) */
+.search-box form button[type="submit"] {
+    padding: 0.55rem 1.2rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #1e5e3a;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.search-box form button[type="submit"]:hover {
+    background-color: #174a2d;
+}
+
+/* ===== Tabel Responsif Wrapper ===== */
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 0.65rem 0.75rem;
+    border-bottom: 1px solid #e2e6ea;
+}
+
+thead {
+    background-color: #1e5e3a;
+    color: #fff;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f7f9fb;
+}
+
+tbody tr:hover {
+    background-color: #eef4fa;
+}
+
+td button {
+    padding: 0.35rem 0.7rem;
+    margin-right: 0.35rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+
+td button.btn-edit {
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+td button.btn-detail {
+    background-color: #0275d8;
+    color: #fff;
+}
+
+td button.btn-hapus {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+/* MODIFIKASI: Menambahkan style agar tag <a> yang menggunakan class tombol (btn-edit, btn-detail, btn-hapus) tampil persis seperti button */
+td a.btn-edit,
+td a.btn-detail,
+td a.btn-hapus,
+.btn-edit,
+.btn-detail,
+.btn-hapus {
+    display: inline-block;
+    padding: 0.35rem 0.7rem;
+    margin-right: 0.35rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-decoration: none;
+    text-align: center;
+}
+
+/* Tautan Edit berwarna oranye (jobsheet 9 bab 6.1: <a> disamarkan menjadi tombol) */
+td a.btn-edit,
+.btn-edit {
+    background-color: #f0ad4e;
+    color: #fff;
+}
+
+td a.btn-detail,
+.btn-detail {
+    background-color: #0275d8;
+    color: #fff;
+}
+
+td a.btn-hapus,
+.btn-hapus {
+    background-color: #d9534f;
+    color: #fff;
+}
+
+/* MODIFIKASI: Efek hover pada link tombol aksi agar teks tidak bergaris bawah dan warna tetap putih */
+td a.btn-edit:hover,
+td a.btn-detail:hover,
+td a.btn-hapus:hover {
+    text-decoration: none;
+    opacity: 0.9;
+    color: #fff;
+}
+
+/* [BARU] Form Hapus dibuat inline supaya sejajar dengan tombol Edit dalam satu sel <td> */
+td form.form-hapus {
+    display: inline;
+}
+
+/* [BARU] Tombol Hapus (kini <button> di dalam form). Selector dibuat spesifik agar tidak
+   tertimpa aturan "form button[type=submit]" yang berwarna hijau dan berukuran besar. */
+td form.form-hapus button.btn-hapus {
+    display: inline-block;
+    padding: 0.35rem 0.7rem;
+    margin-right: 0;
+    border: none;
+    border-radius: 4px;
+    background-color: #d9534f;
+    color: #fff;
+    font-family: inherit;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+td form.form-hapus button.btn-hapus:hover {
+    background-color: #c9302c;
+}
+
+/* ===== Form ===== */
+form p {
+    margin-bottom: 1rem;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-weight: 600;
+    color: #444;
+}
+
+form input,
+form select {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid #cdd4da;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+form button[type="submit"] {
+    background-color: #1e5e3a;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+form button[type="submit"]:hover {
+    background-color: #164869;
+}
+
+/* Teks Peringatan Error Validasi JS */
+.error {
+    display: block;
+    color: #d9534f;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+/* [BARU] ===== Navigasi Pagination ===== */
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.pagination a {
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #cdd4da;
+    border-radius: 4px;
+    color: #1e5e3a;
+}
+
+.pagination a:hover {
+    background-color: #eef4fa;
+    text-decoration: none;
+}
+
+/* [BARU] Halaman yang sedang dibuka disorot penuh dengan warna tema */
+.pagination a.active {
+    background-color: #1e5e3a;
+    color: #fff;
+    border-color: #1e5e3a;
+}
+
+/* [MODIFIKASI] ===== Flash Message =====
+   Dipindah KELUAR dari @media (max-width: 480px) agar tampil di semua ukuran layar,
+   dan ditambah varian warning. */
+.flash {
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.flash-error,
+.flash-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.flash-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* ===== Footer ===== */
+footer {
+    text-align: center;
+    padding: 1.25rem;
+    color: #7a8794;
+    font-size: 0.9rem;
+}
+
+/* =========================================================
+   MEDIA QUERIES (RESPONSIVE DESIGN)
+   ========================================================= */
+
+/* Breakpoint Tablet (<= 768px) */
+@media (max-width: 768px) {
+    main section:nth-of-type(2) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Breakpoint Mobile (<= 480px) */
+@media (max-width: 480px) {
+    /* Munculkan Tombol Hamburger */
+    .nav-toggle-label {
+        display: block;
+    }
+
+    /* Sembunyikan Menu Navigasi Secara Bawaan */
+    header nav {
+        display: none;
+        width: 100%;
+        order: 3;
+        margin-top: 1rem;
+    }
+
+    /* Tampilkan Menu Saat JavaScript Menambahkan Class nav-open */
+    header nav.nav-open {
+        display: block;
+    }
+
+    /* Susun Menu Navigasi Menjadi Vertikal */
+    header nav ul {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    /* Ubah Kartu Statistik Menjadi 1 Kolom */
+    main section:nth-of-type(2) {
+        grid-template-columns: 1fr;
+    }
+
+    /* Form Memenuhi Lebar Layar */
+    form input,
+    form select,
+    .search-box input {
+        max-width: 100%;
+    }
+}
