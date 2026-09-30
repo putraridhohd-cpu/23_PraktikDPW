@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+require __DIR__ . '/../includes/auth.php'; // [MODIFIKASI-JS10] guard login (sekaligus memulai session), menggantikan blok session_start manual
 require_once __DIR__ . '/../includes/koneksi.php';
 
 $flash = $_SESSION['flash'] ?? null;
@@ -41,7 +39,7 @@ include_once __DIR__ . '/../includes/header.php';
         </div>
     <?php endif; ?>
 
-    <!-- [MODIFIKASI] Ditambahkan class="form-edit" agar app.js tahu form ini perlu konfirmasi ekstra sebelum Update (Latihan no.23) -->
+    <!-- class="form-edit" membuat app.js meminta konfirmasi ekstra sebelum Update -->
     <form id="form-tambah" class="form-edit" method="post" action="proses_edit.php">
         <input type="hidden" name="id" value="<?= (int) $buku['id']; ?>">
 

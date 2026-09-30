@@ -48,6 +48,26 @@ header nav a {
     font-weight: 500;
 }
 
+/* [BARU-JS10] ===== Status Login di Pojok Kanan Header (.auth-status) =====
+   Berisi "nama petugas + Logout" (sudah login) atau "Login" (Tamu). */
+.auth-status {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #fff;
+}
+
+/* [BARU-JS10] Tautan Login/Logout diberi garis bawah agar beda dari menu navigasi biasa */
+.auth-status a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* [BARU-JS10] Nama petugas ditebalkan sedikit */
+.auth-status span {
+    font-weight: 600;
+}
+
 /* Tombol Hamburger di Desktop (Disembunyikan) */
 .nav-toggle-label {
     display: none;
@@ -130,20 +150,20 @@ main section:nth-of-type(2) article p {
     font-size: 1rem;
 }
 
-/* [BARU] Form pencarian: kolom input dan tombol "Cari" sejajar horizontal */
+/* Form pencarian: kolom input dan tombol "Cari" sejajar horizontal */
 .search-box form {
     display: flex;
     gap: 0.5rem;
-    align-items: flex-end; /* [BARU] sejajarkan berdasarkan tepi bawah (label+input lebih tinggi dari tombol) */
+    align-items: flex-end; /* sejajarkan berdasarkan tepi bawah (label+input lebih tinggi dari tombol) */
 }
 
-/* [BARU] Pembungkus label + input */
+/* Pembungkus label + input */
 .search-box form span {
     flex: 1 1 auto;
     max-width: 320px;
 }
 
-/* [BARU] Tombol "Cari" (selector dibuat spesifik agar tidak kalah dari aturan form button[type="submit"]) */
+/* Tombol "Cari" (selector dibuat spesifik agar tidak kalah dari aturan form button[type="submit"]) */
 .search-box form button[type="submit"] {
     padding: 0.55rem 1.2rem;
     border: none;
@@ -211,7 +231,7 @@ td button.btn-hapus {
     color: #fff;
 }
 
-/* MODIFIKASI: Menambahkan style agar tag <a> yang menggunakan class tombol (btn-edit, btn-detail, btn-hapus) tampil persis seperti button */
+/* Style agar tag <a> yang menggunakan class tombol (btn-edit, btn-detail, btn-hapus) tampil persis seperti button */
 td a.btn-edit,
 td a.btn-detail,
 td a.btn-hapus,
@@ -248,7 +268,7 @@ td a.btn-hapus,
     color: #fff;
 }
 
-/* MODIFIKASI: Efek hover pada link tombol aksi agar teks tidak bergaris bawah dan warna tetap putih */
+/* Efek hover pada link tombol aksi agar teks tidak bergaris bawah dan warna tetap putih */
 td a.btn-edit:hover,
 td a.btn-detail:hover,
 td a.btn-hapus:hover {
@@ -257,12 +277,12 @@ td a.btn-hapus:hover {
     color: #fff;
 }
 
-/* [BARU] Form Hapus dibuat inline supaya sejajar dengan tombol Edit dalam satu sel <td> */
+/* Form Hapus dibuat inline supaya sejajar dengan tombol Edit dalam satu sel <td> */
 td form.form-hapus {
     display: inline;
 }
 
-/* [BARU] Tombol Hapus (kini <button> di dalam form). Selector dibuat spesifik agar tidak
+/* Tombol Hapus (kini <button> di dalam form). Selector dibuat spesifik agar tidak
    tertimpa aturan "form button[type=submit]" yang berwarna hijau dan berukuran besar. */
 td form.form-hapus button.btn-hapus {
     display: inline-block;
@@ -318,6 +338,46 @@ form button[type="submit"]:hover {
     background-color: #164869;
 }
 
+/* [BARU-JS10] ===== Form Login & Registrasi ===== */
+
+/* [BARU-JS10] Kartu form dibatasi lebarnya dan diletakkan di tengah halaman */
+.auth-card {
+    max-width: 440px;
+    margin: 0 auto 1.5rem auto;
+}
+
+/* [BARU-JS10] Jarak antar pasangan label + input */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* [BARU-JS10] Area tombol submit */
+.form-actions {
+    margin-top: 1.25rem;
+}
+
+/* [BARU-JS10] Tombol utama (Masuk / Daftar) berwarna hijau tema, hover lebih gelap */
+form button.btn-primary {
+    background-color: #1e5e3a;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+form button.btn-primary:hover {
+    background-color: #174a2d;
+}
+
+/* [BARU-JS10] Tautan di bawah form ("Belum punya akun? Daftar di sini") */
+.auth-link {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: #55677a;
+}
+
 /* Teks Peringatan Error Validasi JS */
 .error {
     display: block;
@@ -326,7 +386,7 @@ form button[type="submit"]:hover {
     margin-top: 0.25rem;
 }
 
-/* [BARU] ===== Navigasi Pagination ===== */
+/* ===== Navigasi Pagination ===== */
 .pagination {
     display: flex;
     flex-wrap: wrap;
@@ -346,16 +406,16 @@ form button[type="submit"]:hover {
     text-decoration: none;
 }
 
-/* [BARU] Halaman yang sedang dibuka disorot penuh dengan warna tema */
+/* Halaman yang sedang dibuka disorot penuh dengan warna tema */
 .pagination a.active {
     background-color: #1e5e3a;
     color: #fff;
     border-color: #1e5e3a;
 }
 
-/* [MODIFIKASI] ===== Flash Message =====
-   Dipindah KELUAR dari @media (max-width: 480px) agar tampil di semua ukuran layar,
-   dan ditambah varian warning. */
+/* ===== Flash Message =====
+   Tampil di semua ukuran layar; varian: success (hijau), error (merah), warning (kuning).
+   Varian warning juga dipakai auth.php untuk pesan "Silakan login terlebih dahulu." */
 .flash {
     padding: 0.75rem 1rem;
     border-radius: 6px;

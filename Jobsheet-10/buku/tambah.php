@@ -1,10 +1,23 @@
 <?php
+require __DIR__ . '/../includes/auth.php'; // [MODIFIKASI-JS10] guard login WAJIB di baris pertama, sebelum header.php
+
+// [BARU-JS10] Ambil flash message dari proses_tambah.php (sebelumnya tidak pernah ditampilkan di halaman ini)
+$flash = $_SESSION['flash'] ?? null;
+unset($_SESSION['flash']);
+
 include_once __DIR__ . '/../includes/header.php';
 ?>
 
 <main>
     <section style="max-width: 600px; margin: 0 auto; padding: 1rem;">
         <h2>Tambah Buku Baru</h2>
+
+        <!-- [BARU-JS10] Tampilkan flash message jika ada -->
+        <?php if ($flash): ?>
+            <div class="flash flash-<?= htmlspecialchars($flash['type'] ?? 'error'); ?>">
+                <?= htmlspecialchars($flash['pesan'] ?? ''); ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Action mengarah ke proses_tambah.php dengan method POST -->
         <form action="proses_tambah.php" method="POST">

@@ -2,6 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+$sudahLogin = isset($_SESSION['user_id']); // [BARU-JS10] status login disimpan sekali, dipakai berulang di bawah
+
 $__jobsheetRoot = dirname(__DIR__);
 $__scriptDir = dirname($_SERVER['SCRIPT_FILENAME']);
 $__rel = ltrim(str_replace('\\', '/', substr($__scriptDir, strlen($__jobsheetRoot))), '/');
@@ -23,10 +25,21 @@ $base = $__rel === '' ? '' : str_repeat('../', substr_count($__rel, '/') + 1);
             <ul>
                 <li><a href="<?php echo $base; ?>index.php">Beranda</a></li>
                 <li><a href="<?php echo $base; ?>buku/list.php">Daftar Buku</a></li>
+                <?php if ($sudahLogin): ?> <!-- [MODIFIKASI-JS10] menu di bawah ini hanya muncul untuk Petugas yang login -->
                 <li><a href="<?php echo $base; ?>buku/tambah.php">Tambah Buku</a></li>
                 <li><a href="<?php echo $base; ?>anggota/list.php">Daftar Anggota</a></li>
                 <li><a href="<?php echo $base; ?>anggota/tambah.php">Tambah Anggota</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
+        <!-- [BARU-JS10] Status login di pojok kanan header -->
+        <div class="auth-status">
+            <?php if ($sudahLogin): ?>
+                <span><?php echo htmlspecialchars($_SESSION['nama'] ?? ''); ?></span>
+                <a href="<?php echo $base; ?>auth/logout.php">Logout</a>
+            <?php else: ?>
+                <a href="<?php echo $base; ?>auth/login.php">Login</a>
+            <?php endif; ?>
+        </div>
     </header>
     <main>

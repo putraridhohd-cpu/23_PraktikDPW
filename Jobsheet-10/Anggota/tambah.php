@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '/../includes/auth.php'; // [MODIFIKASI-JS10] guard login WAJIB di baris pertama, sebelum header.php
 include_once __DIR__ . '/../includes/header.php';
 ?>
 

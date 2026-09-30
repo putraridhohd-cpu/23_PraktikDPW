@@ -1,8 +1,6 @@
 <?php
-// [MODIFIKASI] File ini sebelumnya berisi kode ANGGOTA (no_anggota, email). Diganti dengan kode BUKU.
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// Memproses form tambah buku: validasi lalu INSERT ke database
+require __DIR__ . '/../includes/auth.php'; // [MODIFIKASI-JS10] guard login (sekaligus memulai session), menggantikan blok session_start manual
 require_once __DIR__ . '/../includes/koneksi.php';
 
 // Hanya menerima POST
@@ -11,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// [MODIFIKASI] Ambil field form buku dan buang spasi di awal/akhir
+// Ambil field form buku dan buang spasi di awal/akhir
 $judul     = trim($_POST['judul'] ?? '');
 $pengarang = trim($_POST['pengarang'] ?? '');
 $tahun     = trim($_POST['tahun'] ?? '');
@@ -19,7 +17,7 @@ $isbn      = trim($_POST['isbn'] ?? '');
 $stok      = trim($_POST['stok'] ?? '');
 $kategori  = trim($_POST['kategori'] ?? '');
 
-// [MODIFIKASI] Validasi: judul dan pengarang wajib diisi
+// Validasi: judul dan pengarang wajib diisi
 if ($judul === '' || $pengarang === '') {
     $_SESSION['flash'] = ['type' => 'error', 'pesan' => 'Judul dan Pengarang wajib diisi!'];
     header('Location: tambah.php');
@@ -27,7 +25,7 @@ if ($judul === '' || $pengarang === '') {
 }
 
 try {
-    // [MODIFIKASI] INSERT ke tabel buku dengan prepared statement
+    // INSERT ke tabel buku dengan prepared statement
     $stmt = $pdo->prepare(
         "INSERT INTO buku (judul, pengarang, tahun, isbn, stok, kategori)
          VALUES (:judul, :pengarang, :tahun, :isbn, :stok, :kategori)"
