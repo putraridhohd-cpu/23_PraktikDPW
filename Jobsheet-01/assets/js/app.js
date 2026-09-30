@@ -10,26 +10,21 @@ function initNavToggle() {
 }
 
 // ===== 2. Konfirmasi Hapus Data (Form Hapus) =====
-// [MODIFIKASI] Tombol Hapus sekarang berada di dalam <form class="form-hapus" method="post">
-// yang benar-benar mengirim request ke hapus.php. Konfirmasi dilakukan pada event "submit"
+// Tombol Hapus berada di dalam <form class="form-hapus" method="post">
+// yang benar-benar mengirim request ke server. Konfirmasi dilakukan pada event "submit"
 // supaya bisa dibatalkan (preventDefault) SEBELUM data terkirim ke server.
 function initHapusConfirm() {
-    // [MODIFIKASI] Event delegation memakai "submit" (sebelumnya "click")
     document.addEventListener("submit", function (e) {
         const form = e.target;
 
-        // [BARU] Hanya tangani form Hapus; form lain (cari, tambah, edit) dibiarkan normal
         if (!form.classList.contains("form-hapus")) return;
 
         const row = form.closest("tr");
 
-        // [MODIFIKASI] Nama diambil dari atribut data-nama pada form; cadangannya sel <td> pertama
         const nama = (form.dataset.nama || (row ? row.querySelector("td")?.textContent : "") || "data ini").trim();
 
         const yakin = confirm("Yakin ingin menghapus \"" + nama + "\"?");
 
-        // [MODIFIKASI] Logika dibalik: kalau pengguna menekan Cancel, batalkan pengiriman form.
-        // Kalau OK, form lanjut submit ke hapus.php (row.remove() tidak dipakai lagi).
         if (!yakin) {
             e.preventDefault();
         }
@@ -52,7 +47,7 @@ function initTableFilter() {
     });
 }
 
-// ===== 4. Validasi Form Tambah / Edit =====
+// ===== 4. Validasi Form Tambah / Edit + Konfirmasi Ekstra sebelum Update =====
 function tampilkanError(input, pesan) {
     hapusError(input);
     const span = document.createElement("span");
@@ -83,8 +78,20 @@ function initValidasiForm() {
             hapusError(judul);
         }
 
+        // [MODIFIKASI] Kalau validasi gagal, hentikan di sini (jangan lanjut ke pengecekan konfirmasi update di bawah)
         if (!valid) {
-            e.preventDefault(); // Mencegah form terkirim jika kosong
+            e.preventDefault();
+            return;
+        }
+
+        // [BARU] Ide Latihan Tambahan no.23: konfirmasi ekstra sebelum menyimpan perubahan (Update).
+        // Hanya berlaku untuk form Edit (diberi class "form-edit" di edit.php) — form Tambah tidak perlu konfirmasi ini,
+        // karena Tambah tidak menimpa data lama, sedangkan Update mengganti data yang sudah ada.
+        if (form.classList.contains("form-edit")) {
+            const yakin = confirm("Yakin ingin menyimpan perubahan data ini?");
+            if (!yakin) {
+                e.preventDefault(); // [BARU] batalkan submit kalau pengguna menekan Cancel
+            }
         }
     });
 }
