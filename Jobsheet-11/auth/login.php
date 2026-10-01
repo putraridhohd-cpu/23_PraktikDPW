@@ -21,12 +21,13 @@ include __DIR__ . '/../includes/header.php';
     <h2>Login Petugas</h2>
 
     <?php if ($flash): ?>
-        <div class="flash flash-<?= htmlspecialchars($flash['type'] ?? 'error'); ?>">
-            <?= htmlspecialchars($flash['pesan'] ?? ''); ?>
+        <div class="flash flash-<?= e($flash['type'] ?? 'error'); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+            <?= e($flash['pesan'] ?? ''); ?> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
     <?php endif; ?>
 
     <form method="post" action="proses_login.php">
+        <?= csrf_field(); ?> <!-- [BARU-JS11] token CSRF tersembunyi: wajib ada di setiap form POST -->
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" required>

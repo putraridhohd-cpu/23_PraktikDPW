@@ -65,13 +65,13 @@ include_once __DIR__ . '/../includes/header.php';
 
     <!-- Flash message hasil edit / hapus -->
     <?php if ($flash): ?>
-        <div class="flash flash-<?= htmlspecialchars($flash['type'] ?? 'success'); ?>">
-            <?= htmlspecialchars($flash['pesan'] ?? ''); ?>
+        <div class="flash flash-<?= e($flash['type'] ?? 'success'); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+            <?= e($flash['pesan'] ?? ''); ?> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
     <?php endif; ?>
 
     <?php if ($errorDb): ?>
-        <div class="flash flash-error"><?= htmlspecialchars($errorDb); ?></div>
+        <div class="flash flash-error"><?= e($errorDb); ?></div> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
     <?php endif; ?>
 
     <!-- Form pencarian: method GET, field bernama q, id search-input (dipakai filter instan app.js), plus tombol Cari -->
@@ -79,7 +79,7 @@ include_once __DIR__ . '/../includes/header.php';
         <form method="get" action="list.php">
             <span>
                 <label for="search-input">Cari Anggota</label>
-                <input type="text" id="search-input" name="q" placeholder="Ketik nama atau no anggota..." value="<?= htmlspecialchars($keyword); ?>">
+                <input type="text" id="search-input" name="q" placeholder="Ketik nama atau no anggota..." value="<?= e($keyword); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
             </span>
             <button type="submit">Cari</button>
         </form>
@@ -100,17 +100,18 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php if (!empty($daftarAnggota)): ?>
                     <?php foreach ($daftarAnggota as $row): ?>
                         <tr>
-                            <td><?= htmlspecialchars($row['no_anggota'] ?? '-'); ?></td>
-                            <td><?= htmlspecialchars($row['nama'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['alamat'] ?? '-'); ?></td>
-                            <td><?= htmlspecialchars($row['no_hp'] ?? '-'); ?></td>
+                            <td><?= e($row['no_anggota'] ?? '-'); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                            <td><?= e($row['nama'] ?? ''); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                            <td><?= e($row['alamat'] ?? '-'); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                            <td><?= e($row['no_hp'] ?? '-'); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
                             <td>
                                 <!-- Tautan Edit membawa id lewat URL (dibaca $_GET['id'] di edit.php) -->
                                 <a href="edit.php?id=<?= (int) $row['id']; ?>" class="btn-edit">Edit</a>
 
                                 <!-- Tombol Hapus adalah <form method="post"> sungguhan, id dibawa lewat input hidden -->
-                                <form class="form-hapus" method="post" action="hapus.php" data-nama="<?= htmlspecialchars($row['nama'] ?? ''); ?>">
+                                <form class="form-hapus" method="post" action="hapus.php" data-nama="<?= e($row['nama'] ?? ''); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
                                     <input type="hidden" name="id" value="<?= (int) $row['id']; ?>">
+                                    <?= csrf_field(); ?> <!-- [BARU-JS11] token CSRF tersembunyi: wajib ada di setiap form POST -->
                                     <button type="submit" class="btn-hapus">Hapus</button>
                                 </form>
                             </td>
@@ -121,7 +122,7 @@ include_once __DIR__ . '/../includes/header.php';
                         <td colspan="5" style="text-align: center; padding: 1.5rem; color: #666;">
                             <?php if ($keyword !== ''): ?>
                                 <!-- Pesan khusus jika pencarian tidak menemukan hasil -->
-                                Tidak ada anggota dengan kata kunci "<?= htmlspecialchars($keyword); ?>".
+                                Tidak ada anggota dengan kata kunci "<?= e($keyword); ?>". <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
                             <?php else: ?>
                                 Belum ada data anggota. Silakan tambah lewat menu "Tambah Anggota".
                             <?php endif; ?>

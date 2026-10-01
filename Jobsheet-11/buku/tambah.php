@@ -14,13 +14,14 @@ include_once __DIR__ . '/../includes/header.php';
 
         <!-- [BARU-JS10] Tampilkan flash message jika ada -->
         <?php if ($flash): ?>
-            <div class="flash flash-<?= htmlspecialchars($flash['type'] ?? 'error'); ?>">
-                <?= htmlspecialchars($flash['pesan'] ?? ''); ?>
+            <div class="flash flash-<?= e($flash['type'] ?? 'error'); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                <?= e($flash['pesan'] ?? ''); ?> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
             </div>
         <?php endif; ?>
 
         <!-- Action mengarah ke proses_tambah.php dengan method POST -->
         <form action="proses_tambah.php" method="POST">
+            <?= csrf_field(); ?> <!-- [BARU-JS11] token CSRF tersembunyi: wajib ada di setiap form POST -->
             <div style="margin-bottom: 1rem;">
                 <label for="judul" style="display:block; margin-bottom: 0.3rem; font-weight: bold;">Judul Buku *</label>
                 <input type="text" name="judul" id="judul" placeholder="Ketik judul buku..." required style="width: 100%; padding: 8px; box-sizing: border-box;">

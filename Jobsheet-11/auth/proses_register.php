@@ -3,6 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once __DIR__ . '/../includes/csrf.php'; // [BARU-JS11] menyediakan csrf_verify()
 require_once __DIR__ . '/../includes/koneksi.php';
 
 // [BARU-JS10] Hanya menerima POST
@@ -10,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: register.php');
     exit;
 }
+
+csrf_verify(); // [BARU-JS11] tolak (HTTP 403) jika token CSRF tidak ada/tidak cocok, SEBELUM membaca input & menyentuh database
 
 $nama     = trim($_POST['nama'] ?? '');
 $username = trim($_POST['username'] ?? '');

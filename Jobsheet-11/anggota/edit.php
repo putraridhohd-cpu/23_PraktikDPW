@@ -29,33 +29,34 @@ include_once __DIR__ . '/../includes/header.php';
     <h2>Edit Anggota</h2>
 
     <?php if ($flash): ?>
-        <div class="flash flash-<?= htmlspecialchars($flash['type'] ?? 'error'); ?>">
-            <?= htmlspecialchars($flash['pesan'] ?? ''); ?>
+        <div class="flash flash-<?= e($flash['type'] ?? 'error'); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+            <?= e($flash['pesan'] ?? ''); ?> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
     <?php endif; ?>
 
     <!-- class="form-edit" membuat app.js meminta konfirmasi ekstra sebelum Update -->
     <form id="form-tambah" class="form-edit" method="post" action="proses_edit.php">
+        <?= csrf_field(); ?> <!-- [BARU-JS11] token CSRF tersembunyi: wajib ada di setiap form POST -->
         <input type="hidden" name="id" value="<?= (int) $anggota['id']; ?>">
 
         <div style="margin-bottom: 1rem;">
             <label for="no_anggota" style="display:block; margin-bottom: 0.3rem; font-weight: bold;">No Anggota *</label>
-            <input type="text" name="no_anggota" id="no_anggota" value="<?= htmlspecialchars($anggota['no_anggota'] ?? ''); ?>" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            <input type="text" name="no_anggota" id="no_anggota" value="<?= e($anggota['no_anggota'] ?? ''); ?>" required style="width: 100%; padding: 8px; box-sizing: border-box;"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
 
         <div style="margin-bottom: 1rem;">
             <label for="nama" style="display:block; margin-bottom: 0.3rem; font-weight: bold;">Nama Lengkap *</label>
-            <input type="text" name="nama" id="nama" value="<?= htmlspecialchars($anggota['nama'] ?? ''); ?>" required style="width: 100%; padding: 8px; box-sizing: border-box;">
+            <input type="text" name="nama" id="nama" value="<?= e($anggota['nama'] ?? ''); ?>" required style="width: 100%; padding: 8px; box-sizing: border-box;"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
 
         <div style="margin-bottom: 1rem;">
             <label for="alamat" style="display:block; margin-bottom: 0.3rem; font-weight: bold;">Alamat</label>
-            <textarea name="alamat" id="alamat" rows="3" style="width: 100%; padding: 8px; box-sizing: border-box;"><?= htmlspecialchars($anggota['alamat'] ?? ''); ?></textarea>
+            <textarea name="alamat" id="alamat" rows="3" style="width: 100%; padding: 8px; box-sizing: border-box;"><?= e($anggota['alamat'] ?? ''); ?></textarea> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
 
         <div style="margin-bottom: 1.5rem;">
             <label for="no_hp" style="display:block; margin-bottom: 0.3rem; font-weight: bold;">No HP / WhatsApp</label>
-            <input type="text" name="no_hp" id="no_hp" value="<?= htmlspecialchars($anggota['no_hp'] ?? ''); ?>" style="width: 100%; padding: 8px; box-sizing: border-box;">
+            <input type="text" name="no_hp" id="no_hp" value="<?= e($anggota['no_hp'] ?? ''); ?>" style="width: 100%; padding: 8px; box-sizing: border-box;"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
 
         <div style="display: flex; gap: 10px; align-items: center;">

@@ -1,6 +1,7 @@
 <?php
 // Memproses form edit anggota: validasi lalu UPDATE ke database
 require __DIR__ . '/../includes/auth.php'; // [MODIFIKASI-JS10] guard login (sekaligus memulai session), menggantikan blok session_start manual
+require_once __DIR__ . '/../includes/csrf.php'; // [BARU-JS11] menyediakan csrf_verify(); di-require SETELAH auth.php (guard login jalan lebih dulu)
 require_once __DIR__ . '/../includes/koneksi.php';
 
 // Hanya menerima POST
@@ -8,6 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: list.php');
     exit;
 }
+
+csrf_verify(); // [BARU-JS11] tolak (HTTP 403) jika token CSRF tidak ada/tidak cocok, SEBELUM membaca input & menyentuh database
 
 // id diambil dari $_POST (dikirim lewat input hidden), bukan $_GET
 $id         = filter_var($_POST['id'] ?? null, FILTER_VALIDATE_INT);

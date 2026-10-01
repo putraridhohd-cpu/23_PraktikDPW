@@ -2,6 +2,8 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+require_once __DIR__ . '/helpers.php'; // [BARU-JS11] fungsi e() (anti-XSS) tersedia di semua halaman yang memuat header
+require_once __DIR__ . '/csrf.php';    // [BARU-JS11] csrf_token(), csrf_field(), csrf_verify() tersedia di semua halaman
 $sudahLogin = isset($_SESSION['user_id']); // [BARU-JS10] status login disimpan sekali, dipakai berulang di bawah
 
 $__jobsheetRoot = dirname(__DIR__);
@@ -14,7 +16,7 @@ $base = $__rel === '' ? '' : str_repeat('../', substr_count($__rel, '/') + 1);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SIMPUS-Mini<?php echo isset($page_title) ? ' | ' . $page_title : ''; ?></title>
+    <title>SIMPUS-Mini<?php echo isset($page_title) ? ' | ' . e($page_title) : ''; ?></title> <!-- [MODIFIKASI-JS11] judul halaman dibungkus e() -->
     <link rel="stylesheet" href="<?php echo $base; ?>assets/css/style.css">
 </head>
 <body>
@@ -35,7 +37,7 @@ $base = $__rel === '' ? '' : str_repeat('../', substr_count($__rel, '/') + 1);
         <!-- [BARU-JS10] Status login di pojok kanan header -->
         <div class="auth-status">
             <?php if ($sudahLogin): ?>
-                <span><?php echo htmlspecialchars($_SESSION['nama'] ?? ''); ?></span>
+                <span><?php echo e($_SESSION['nama'] ?? ''); ?></span> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
                 <a href="<?php echo $base; ?>auth/logout.php">Logout</a>
             <?php else: ?>
                 <a href="<?php echo $base; ?>auth/login.php">Login</a>

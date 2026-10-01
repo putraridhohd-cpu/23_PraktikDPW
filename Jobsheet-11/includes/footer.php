@@ -1,6 +1,6 @@
 </main>
     <footer>
-        <p>&copy; 2026 SIMPUS-Mini &mdash; Jobsheet 8</p>
+        <p>&copy; 2026 SIMPUS-Mini &mdash; Jobsheet 11</p> <!-- [MODIFIKASI-JS11] teks footer diperbarui (sebelumnya masih "Jobsheet 8") -->
     </footer>
     <script src="<?php echo $base; ?>assets/js/app.js"></script>
     <?php if (!empty($extra_scripts)): foreach ($extra_scripts as $src): ?>

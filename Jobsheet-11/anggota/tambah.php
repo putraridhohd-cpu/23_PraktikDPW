@@ -1,5 +1,10 @@
 <?php
 require __DIR__ . '/../includes/auth.php'; // [MODIFIKASI-JS10] guard login WAJIB di baris pertama, sebelum header.php
+
+// [BARU-JS11] Ambil flash message dari proses_tambah.php (error validasi / No. Anggota duplikat) lalu hapus agar tidak muncul dua kali
+$flash = $_SESSION['flash'] ?? null; // [BARU-JS11]
+unset($_SESSION['flash']); // [BARU-JS11]
+
 include_once __DIR__ . '/../includes/header.php';
 ?>
 
@@ -7,7 +12,15 @@ include_once __DIR__ . '/../includes/header.php';
     <section style="max-width: 600px; margin: 0 auto; padding: 1rem;">
         <h2>Tambah Anggota Baru</h2>
 
+        <!-- [BARU-JS11] Tampilkan flash message jika ada (menggantikan die() yang dulu membocorkan pesan error mentah) -->
+        <?php if ($flash): ?>
+            <div class="flash flash-<?= e($flash['type'] ?? 'error'); ?>">
+                <?= e($flash['pesan'] ?? ''); ?>
+            </div>
+        <?php endif; ?>
+
         <form action="proses_tambah.php" method="POST">
+            <?= csrf_field(); ?> <!-- [BARU-JS11] token CSRF tersembunyi: wajib ada di setiap form POST -->
             <div style="margin-bottom: 1rem;">
                 <label for="no_anggota" style="display:block; margin-bottom: 0.3rem; font-weight: bold;">No Anggota *</label>
                 <input type="text" name="no_anggota" id="no_anggota" placeholder="Contoh: ANG-001" required style="width: 100%; padding: 8px; box-sizing: border-box;">

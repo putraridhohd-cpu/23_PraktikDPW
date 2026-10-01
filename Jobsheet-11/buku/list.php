@@ -67,13 +67,13 @@ include_once __DIR__ . '/../includes/header.php';
 
     <!-- [BARU] Flash message hasil tambah / edit / hapus -->
     <?php if ($flash): ?>
-        <div class="flash flash-<?= htmlspecialchars($flash['type'] ?? 'success'); ?>">
-            <?= htmlspecialchars($flash['pesan'] ?? ''); ?>
+        <div class="flash flash-<?= e($flash['type'] ?? 'success'); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+            <?= e($flash['pesan'] ?? ''); ?> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
         </div>
     <?php endif; ?>
 
     <?php if ($errorDb): ?>
-        <div class="flash flash-error"><?= htmlspecialchars($errorDb); ?></div>
+        <div class="flash flash-error"><?= e($errorDb); ?></div> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
     <?php endif; ?>
 
     <!-- [MODIFIKASI] Form pencarian: method GET, field bernama q, id search-input (dipakai filter instan app.js), plus tombol Cari -->
@@ -81,7 +81,7 @@ include_once __DIR__ . '/../includes/header.php';
         <form method="get" action="list.php">
             <span>
                 <label for="search-input">Cari Judul Buku</label>
-                <input type="text" id="search-input" name="q" placeholder="Ketik judul buku..." value="<?= htmlspecialchars($keyword); ?>">
+                <input type="text" id="search-input" name="q" placeholder="Ketik judul buku..." value="<?= e($keyword); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
             </span>
             <button type="submit">Cari</button>
         </form>
@@ -103,18 +103,19 @@ include_once __DIR__ . '/../includes/header.php';
                 <?php if (!empty($daftarBuku)): ?>
                     <?php foreach ($daftarBuku as $row): ?>
                         <tr>
-                            <td><?= htmlspecialchars($row['judul'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['pengarang'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['kategori'] ?? '-'); ?></td>
-                            <td><?= htmlspecialchars($row['tahun'] ?? ''); ?></td>
-                            <td><?= htmlspecialchars($row['stok'] ?? ''); ?></td>
+                            <td><?= e($row['judul'] ?? ''); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                            <td><?= e($row['pengarang'] ?? ''); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                            <td><?= e($row['kategori'] ?? '-'); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                            <td><?= e($row['tahun'] ?? ''); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
+                            <td><?= e($row['stok'] ?? ''); ?></td> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
                             <td>
                                 <!-- [MODIFIKASI] Tautan Edit membawa id lewat URL (dibaca $_GET['id'] di edit.php) -->
                                 <a href="edit.php?id=<?= (int) $row['id']; ?>" class="btn-edit">Edit</a>
 
                                 <!-- [MODIFIKASI] Tombol Hapus kini <form method="post"> sungguhan (bukan link GET), id dibawa lewat input hidden -->
-                                <form class="form-hapus" method="post" action="hapus.php" data-nama="<?= htmlspecialchars($row['judul'] ?? ''); ?>">
+                                <form class="form-hapus" method="post" action="hapus.php" data-nama="<?= e($row['judul'] ?? ''); ?>"> <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
                                     <input type="hidden" name="id" value="<?= (int) $row['id']; ?>">
+                                    <?= csrf_field(); ?> <!-- [BARU-JS11] token CSRF tersembunyi: wajib ada di setiap form POST -->
                                     <button type="submit" class="btn-hapus">Hapus</button>
                                 </form>
                             </td>
@@ -125,7 +126,7 @@ include_once __DIR__ . '/../includes/header.php';
                         <td colspan="6" style="text-align: center; padding: 1.5rem; color: #666;">
                             <?php if ($keyword !== ''): ?>
                                 <!-- [BARU] Pesan khusus jika pencarian tidak menemukan hasil -->
-                                Tidak ada buku dengan judul "<?= htmlspecialchars($keyword); ?>".
+                                Tidak ada buku dengan judul "<?= e($keyword); ?>". <!-- [MODIFIKASI-JS11] output di-escape dengan e() -->
                             <?php else: ?>
                                 Belum ada data buku. Silakan tambah lewat menu "Tambah Buku".
                             <?php endif; ?>
