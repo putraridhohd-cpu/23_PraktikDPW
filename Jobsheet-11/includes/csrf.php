@@ -15,7 +15,7 @@ function csrf_token()
     return $_SESSION['csrf_token'];
 }
 
-// [BARU-JS11] Menghasilkan <input type="hidden"> berisi token; dipakai dengan <?= csrf_field(); ?> di dalam setiap <form method="post">.
+// [MODIFIKASI-JS11] Menghasilkan input hidden berisi token; dipanggil lewat csrf_field() di dalam setiap form method post. (JANGAN menulis tag penutup PHP di dalam komentar //: itu menutup mode PHP)
 function csrf_field()
 {
     return '<input type="hidden" name="csrf_token" value="' . e(csrf_token()) . '">';
