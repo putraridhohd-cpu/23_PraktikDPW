@@ -7,7 +7,7 @@ Audit keamanan dasar terhadap kode Jobsheet 7–10.
 - **Cakupan:** seluruh folder `auth/`, `buku/`, `anggota/`, `includes/`, dan file di root proyek.
 
 > Cara membaca: kolom **Sebelum** = kondisi kode Jobsheet 10, kolom **Sesudah** = kondisi kode Jobsheet 11.
-> Kotak `[ ]` di bagian "Bukti pengujian" dicentang **setelah** pengujian benar-benar dijalankan dan hasilnya sesuai.
+> Kotak `[]` di bagian "Bukti pengujian" dicentang **setelah** pengujian benar-benar dijalankan dan hasilnya sesuai.
 > Catatan Windows PowerShell: tulis `curl.exe` (bukan `curl`, karena `curl` di PowerShell adalah alias `Invoke-WebRequest`).
 
 ## Ringkasan Audit
@@ -24,29 +24,29 @@ Audit keamanan dasar terhadap kode Jobsheet 7–10.
 ## Bukti Pengujian
 
 ### 1. SQL Injection
-- [ ] Buka `auth/login.php`, isi username `' OR '1'='1` dan password bebas -> tetap muncul "Username atau password salah."
-- [ ] (Opsional, DBeaver) jalankan query nomor 3 di `sql/03_verifikasi_keamanan.sql` -> hasil 0 baris, menunjukkan string itu diperlakukan sebagai satu nilai teks, bukan perintah SQL.
+- [X] Buka `auth/login.php`, isi username `' OR '1'='1` dan password bebas -> tetap muncul "Username atau password salah."
+- [X] (Opsional, DBeaver) jalankan query nomor 3 di `sql/03_verifikasi_keamanan.sql` -> hasil 0 baris, menunjukkan string itu diperlakukan sebagai satu nilai teks, bukan perintah SQL.
 
 ### 2. XSS
-- [ ] Login, tambah buku dengan judul `<script>alert(1)</script>` -> di `buku/list.php` teks tampil apa adanya, **tidak ada** pop-up `alert`.
-- [ ] Buka `buku/edit.php?id=...` untuk buku tersebut -> isi kolom Judul menampilkan teks yang sama (bukan menjalankan skrip).
-- [ ] (Opsional, DBeaver) query nomor 1 di `sql/03_verifikasi_keamanan.sql` -> data di database tetap tersimpan mentah; yang dinetralkan adalah **output**-nya.
+- [X] Login, tambah buku dengan judul `<script>alert(1)</script>` -> di `buku/list.php` teks tampil apa adanya, **tidak ada** pop-up `alert`.
+- [X] Buka `buku/edit.php?id=...` untuk buku tersebut -> isi kolom Judul menampilkan teks yang sama (bukan menjalankan skrip).
+- [X] (Opsional, DBeaver) query nomor 1 di `sql/03_verifikasi_keamanan.sql` -> data di database tetap tersimpan mentah; yang dinetralkan adalah **output**-nya.
 
 ### 3. CSRF
-- [ ] Login lewat browser, salin cookie `PHPSESSID` dari DevTools (Application -> Cookies).
-- [ ] `curl.exe -i -X POST http://localhost:8000/buku/proses_tambah.php -b "PHPSESSID=<isi cookie>" -d "judul=x"` -> **HTTP 403** dan pesan "Permintaan ditolak: token CSRF tidak valid atau kedaluwarsa."
-- [ ] `View Page Source` pada form Tambah Buku -> ada `<input type="hidden" name="csrf_token" value="...">` berisi 64 karakter heksadesimal.
-- [ ] Tambah buku lewat form biasa di browser -> tetap berhasil (token valid).
+- [X] Login lewat browser, salin cookie `PHPSESSID` dari DevTools (Application -> Cookies).
+- [X] `curl.exe -i -X POST http://localhost:8000/buku/proses_tambah.php -b "PHPSESSID=<isi cookie>" -d "judul=x"` -> **HTTP 403** dan pesan "Permintaan ditolak: token CSRF tidak valid atau kedaluwarsa."
+- [X] `View Page Source` pada form Tambah Buku -> ada `<input type="hidden" name="csrf_token" value="...">` berisi 64 karakter heksadesimal.
+- [X] Tambah buku lewat form biasa di browser -> tetap berhasil (token valid).
 
 ### 4. Validasi & Sanitasi Input
-- [ ] Kosongkan Judul (hapus atribut `required` lewat DevTools) lalu kirim -> muncul "Judul dan Pengarang wajib diisi!" dari server.
-- [ ] Tambah anggota dengan No. Anggota `0` -> tidak lagi dianggap kosong.
+- [X] Kosongkan Judul (hapus atribut `required` lewat DevTools) lalu kirim -> muncul "Judul dan Pengarang wajib diisi!" dari server.
+- [X] Tambah anggota dengan No. Anggota `0` -> tidak lagi dianggap kosong.
 
 ### 5. Session Fixation
-- [ ] Catat nilai `PHPSESSID` di halaman Login (sebelum login), lalu login -> nilai `PHPSESSID` **berubah** setelah berhasil login.
+- [X] Catat nilai `PHPSESSID` di halaman Login (sebelum login), lalu login -> nilai `PHPSESSID` **berubah** setelah berhasil login.
 
 ### 6. Kebocoran pesan error
-- [ ] Tambah anggota dengan No. Anggota yang sudah ada -> muncul pesan "No. Anggota sudah dipakai, gunakan nomor lain." (bukan teks error PostgreSQL).
+- [X] Tambah anggota dengan No. Anggota yang sudah ada -> muncul pesan "No. Anggota sudah dipakai, gunakan nomor lain." (bukan teks error PostgreSQL).
 
 ## Catatan Implementasi
 
